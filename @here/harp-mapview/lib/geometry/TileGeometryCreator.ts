@@ -50,6 +50,7 @@ import {
     OperatorDescriptor
 } from "@here/harp-datasource-protocol/lib/ExprEvaluator";
 import { EarthConstants, ProjectionType } from "@here/harp-geoutils";
+import { LRUCache } from "@here/harp-lrucache";
 import {
     EdgeMaterial,
     EdgeMaterialParameters,
@@ -221,6 +222,8 @@ export class TileGeometryCreator {
     static get instance(): TileGeometryCreator {
         return this.m_instance || (this.m_instance = new TileGeometryCreator());
     }
+
+    private readonly m_textureCache = new LRUCache<string, THREE.Texture>(100);
 
     /**
      *  Creates an instance of TileGeometryCreator. Access is allowed only through `instance`.

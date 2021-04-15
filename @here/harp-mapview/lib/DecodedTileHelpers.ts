@@ -28,6 +28,7 @@ import {
     getTechniqueAutomaticAttrs,
     getTechniqueDescriptor
 } from "@here/harp-datasource-protocol/lib/TechniqueDescriptors";
+import { LRUCache } from "@here/harp-lrucache";
 import {
     CirclePointsMaterial,
     disableBlending,
@@ -139,7 +140,7 @@ export function createMaterial(
         isExtrudedPolygonTechnique(technique)
     ) {
         TEXTURE_PROPERTY_KEYS.forEach((texturePropertyName: string) => {
-            const textureProperty = (technique as any)[texturePropertyName];
+            let textureProperty = (technique as any)[texturePropertyName];
             if (textureProperty === undefined) {
                 return;
             }
@@ -185,6 +186,10 @@ export function createMaterial(
             };
 
             let textureUrl: string | undefined;
+            if (Expr.isExpr(textureProperty)) {
+                textureProperty = getPropertyValue(textureProperty, options.env);
+            }
+
             if (typeof textureProperty === "string") {
                 textureUrl = textureProperty;
             } else if (isTextureBuffer(textureProperty)) {

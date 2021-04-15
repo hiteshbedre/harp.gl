@@ -473,7 +473,7 @@ export class Tile implements CachedResource {
      * The texture will be disposed if the `Tile` is disposed.
      * @param texture - Texture to be owned by the `Tile`
      */
-    addOwnedTexture(texture: THREE.Texture): void {
+    addOwnedTexture(texture: THREE.Texture, textureReady?: boolean): void {
         this.m_ownedTextures.add(texture);
     }
 

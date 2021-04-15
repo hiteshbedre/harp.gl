@@ -163,7 +163,8 @@ export class MapMaterialAdapter {
             }
             if (propName === "color" || propName === "opacity") {
                 updateBaseColor = true;
-            } else {
+            } else if (!propName.endsWith("map")) {
+                // Static textures are already set in the material during tile construction.
                 this.applyMaterialGenericProp(propName, currentValue);
             }
         }
@@ -194,6 +195,9 @@ export class MapMaterialAdapter {
                 // `color` and `opacity` are special properties to support RGBA
                 if (propName === "color" || propName === "opacity") {
                     updateBaseColor = true;
+                } else if (propName.endsWith("map")) {
+                    this.applyMaterialTextureProp(propName, newValue);
+                    somethingChanged = true;
                 } else {
                     this.applyMaterialGenericProp(propName, newValue);
                     somethingChanged = true;
@@ -208,6 +212,26 @@ export class MapMaterialAdapter {
             }
         }
         return somethingChanged;
+    }
+
+    private applyMaterialTextureProp(propName: string, value: Value) {
+        const m = this.material as any;
+        // TODO: How to get the actual texture properties (e.g. make them automatic or ensure texture always exist).
+        if (typeof value === "string") {
+            const newTexture = new THREE.TextureLoader().load(value, (texture: THREE.Texture) => {
+                m[propName] = newTexture;
+            }) as THREE.Texture;
+            this.material.needsUpdate = !m[propName];
+            newTexture.flipY = true;
+            newTexture.minFilter = THREE.LinearFilter;
+        } else if (value instanceof HTMLImageElement || value instanceof HTMLCanvasElement) {
+            this.material.needsUpdate = !m[propName];
+            const newTexture = new THREE.Texture(value);
+            m[propName] = newTexture;
+            newTexture.flipY = true;
+            newTexture.minFilter = THREE.LinearFilter;
+            newTexture.needsUpdate = true;
+        }
     }
 
     private applyMaterialGenericProp(propName: string, value: Value) {

@@ -256,7 +256,8 @@ const standardTechniqueDescriptor = mergeTechniqueDescriptor<StandardTechnique>(
             emissive: { scope: AttrScope.TechniqueRendering, automatic: true },
             emissiveIntensity: { scope: AttrScope.TechniqueRendering, automatic: true },
             refractionRatio: { scope: AttrScope.TechniqueRendering, automatic: true },
-            normalMapType: { scope: AttrScope.TechniqueRendering, automatic: true }
+            normalMapType: { scope: AttrScope.TechniqueRendering, automatic: true },
+            map: { scope: AttrScope.TechniqueRendering, automatic: true }
         }
     }
 );
